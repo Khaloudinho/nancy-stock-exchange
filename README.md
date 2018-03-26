@@ -2,7 +2,7 @@
 - nancy-stock-exchange
 
 # Description
-- App made in order to manage stocks using JavaScript features.
+- Angular app using Mean JS made for the purpose of JS course followed at Uni
 
 # Authors 
 - Khaled Bouguettoucha
