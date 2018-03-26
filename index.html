@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Nancy Stock Exchange</title>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.js"
+            integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+            crossorigin="anonymous"></script>
+    <script src="./node_modules/chart.js/dist/Chart.min.js"></script>
+
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+
+    <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+    <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-route.min.js"></script>
+    <script type="application/javascript" src="scripts/angular/app.js"></script>
+    <script type="application/javascript" src="scripts/angular/stock.js"></script>
+    <script type="application/javascript" src="scripts/angular/stock_directive.js"></script>
+    <script type="application/javascript" src="scripts/angular/stocks_controller.js"></script>
+
+    <script src="./node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
+    <script type="application/javascript" src="scripts/angular/chart_controller.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+          integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="public/styles/main.css" media="screen" />
+
+    <style>
+        @media (min-width: 1200px) {
+            .container {
+                width: 1400px;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body ng-app="stockExchange" ng-controller="StocksController">
+    <div class="container">
+
+    <h1>Welcome to Nancy Stock Exchange : NCYSE</h1>
+        <br />
+
+        <div class="row">
+            <div class="col-xs-6 col-sm-6 col-md-6">
+
+                <form ng-submit="getStocks()" method="get">
+                    <p class="search">
+                        <label for="toolbar">Type a stock code : </label>
+                            <input ng-model="toolbar" name="toolbar" class="form-control" type="text" id="toolbar" />
+                            <button class="btn btn-info" type="submit" id="submit">OK</button>
+                    </p>
+                </form>
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Entreprise name</th>
+                        <th>Stock code</th>
+                        <th>Price</th>
+                        <th>Buy</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                            <tr ng-repeat="stock in stocks">
+                                <td class="name">{{stock.name}}</td>
+                                <td class="code">{{stock.code}}</td>
+                                <td class="price">{{stock.price}}</td>
+                                <td class="earn"><button class="btn btn-warning" type="submit" id="earn" ng-click="doPurchase(stock)">Buy stock</button></td>
+                            </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-xs-6 col-sm-6 col-md-6" ng-controller="LineCtrl">
+                <h3>Evolution of your portfolio</h3>
+                <canvas id="line"
+                        class="chart chart-line"
+                        chart-data="data"
+                        chart-labels="labels"
+                        chart-series="series"
+                        chart-options="options"
+                        chart-dataset-override="datasetOverride"
+                        chart-colours="colours"
+                        chart-click="onClick" width="800" height="450">
+                </canvas>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-sm-6 col-md-6">
+                <h2>Stock portfolio</h2>
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Stock code</th>
+                        <th>Price</th>
+                        <th>Current price</th>
+                        <th>Quantity</th>
+                        <th>Details</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="stock in wallet">
+                            <td class="code">{{stock.code}}</td>
+                            <td class="price">{{stock.price}}</td>
+                            <td class="current_price">{{stock.current_price}}</td>
+                            <td class="quantity">{{stock.qte}}</td>
+                            <td class="details">
+                                <button class="btn btn-info" type="submit" id="details" ng-click="getDetails(stock)">Show details</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-xs-6 col-sm-6 col-md-6">
+                <ul ng-show="stockDetails != undefined">
+                    <br />
+                    <br />
+                    <h2>Details of {{stockDetails.code}} stock</h2>
+                    <br />
+                    <li><b>Code :</b> {{stockDetails.code}}</li>
+                    <li><b>Name :</b> {{stockDetails.name}}</li>
+                    <li><b>Buying price :</b> {{stockDetails.price}}</li>
+                    <li><b>Number of stocks purchased :</b> {{stockDetails.qte}}</li>
+                    <li><b>Actual price :</b> {{stockDetails.current_price}}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

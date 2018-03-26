@@ -1,0 +1,22 @@
+body, tr, th, td {
+    text-align: center;
+}
+
+.search input {
+    display: inline-block;
+    width: 400px;
+    text-align: left;
+
+}
+
+.search label {
+    font-size: 20px;
+}
+
+.search {
+    display: inline-block;
+}
+
+li {
+    list-style: none;
+}
